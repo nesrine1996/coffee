@@ -3,6 +3,8 @@ from menu import resources
 
 
 # TODO: 1. Print report of all coffee machine resources
+resources["profit"] = 0
+
 
 def ask_user():
     drink_dispensed = True
@@ -14,12 +16,15 @@ def ask_user():
             quit()
         elif prompt == "report":
             print(f"Water: {resources['water']}ml")
-            print(f"Milk: {resources['milk']}ml")
+            if prompt != "espresso":
+                print(f"Milk: {resources['milk']}ml")
             print(f"Coffee: {resources['coffee']}g")
+            print(f"Money: $ {resources['profit']}")
         else:
             if not check_resources(prompt):
                 sum_coins = process_coins()
                 check_transaction(prompt, sum_coins)
+                update_resources(prompt)
 
 
 def check_resources(prompt):
@@ -65,6 +70,16 @@ def check_transaction(prompt, sum_coins):
             change = sum_coins - MENU[prompt]["cost"]
             resources["profit"] += MENU[prompt]["cost"]
             print(resources["profit"])
+    return
+
+
+def update_resources(prompt):
+    ingredients_list = ['water', 'milk', 'coffee']
+    if prompt == "espresso":
+        ingredients_list = ['water', 'coffee']
+    for ingredient in ingredients_list:
+        resources[ingredient] -= MENU[prompt]["ingredients"][ingredient]
+    resources["profit"] += MENU[prompt]["cost"]
     return
 
 
